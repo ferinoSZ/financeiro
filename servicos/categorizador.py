@@ -1,8 +1,3 @@
-def categorizar(descricao):
-    if descricao == "Posto shell":
-        categoria = "Transporte"
-    elif descricao == "Mercado":
-        categoria = "Alimentação"
-    else:
-        categoria = "Outros"
-    return categoria
+import chromadb
+from chromadb.utils import embedding_functions
+

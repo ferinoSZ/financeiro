@@ -12,7 +12,7 @@ def registrar_gasto(data):
         dia = datetime.now().strftime('%Y-%m-%d')
 
     cursor = mysql.connection.cursor()
-    cursor.execute("INSERT INTO gastos (descricao, categoria, valor, dia) VALUES (%s, %s, %s, %s)", (descricao, categoria, valor, dia))
+    cursor.execute("INSERT INTO financeiro.gastos (descricao, categoria, valor, dia) VALUES (%s, %s, %s, %s)", (descricao, categoria, valor, dia))
     mysql.connection.commit()
     cursor.close()
 
