@@ -42,7 +42,7 @@ def filtro_por_categoria(data):
     categoria = data.get('categoria')
 
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM gastos WHERE categoria = %s", (categoria,))
+    cursor.execute("SELECT * FROM gastos WHERE categoria = %s", (categoria))
     historico = cursor.fetchall()
     cursor.close()
 
