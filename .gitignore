@@ -1,4 +1,5 @@
 .env
+.vscode
 venv
 chroma_data
 __pycache__/
