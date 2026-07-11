@@ -4,17 +4,25 @@ from datetime import datetime
 
 def registrar_gasto(data):
     descricao = data.get('descricao')
-    categoria = data.get('categoria') or categorizar(descricao)
     valor = data.get('valor')
+
+    if not descricao or not valor:
+        return {"error": "Descrição e valor são obrigatórios."}, 400
+
+    categoria = data.get('categoria') or categorizar(descricao)
     
     dia = data.get('dia')
     if not dia:
         dia = datetime.now().strftime('%Y-%m-%d')
 
-    cursor = mysql.connection.cursor()
-    cursor.execute("INSERT INTO financeiro.gastos (descricao, categoria, valor, dia) VALUES (%s, %s, %s, %s)", (descricao, categoria, valor, dia))
-    mysql.connection.commit()
-    cursor.close()
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("INSERT INTO financeiro.gastos (descricao, categoria, valor, dia) VALUES (%s, %s, %s, %s)", (descricao, categoria, valor, dia))
+        mysql.connection.commit()
+    except Exception as erro:
+        print(f"Erro no bando de dados: {str(erro)}"), 500
+    finally:
+        cursor.close()
 
     return {"message": "Gasto registrado com sucesso!"}
 
