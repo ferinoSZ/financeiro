@@ -14,7 +14,7 @@ collection = chroma_client.get_or_create_collection(
 dados_semente = {
     "Alimentação": "mercado, supermercado, restaurante, lanchonete, padaria, iFood, uber eats, rappy, almoço, janta, comprei pão, café da manhã, lanche, pizzaria, churrascaria, mcdonalds, burger king, feira, açougue, hortifruti",
     
-    "Transporte": "combustível, posto de gasolina, carro, abastecer, uber, 99app, ônibus, passagem, pedágio, estacionamento, metrô, trem, balsa, táxi, recarga de cartão de transporte",
+    "Transporte": "combustível, posto de gasolina, abastecer, uber, 99app, ônibus, passagem, pedágio, estacionamento, metrô, trem, balsa, táxi, recarga de cartão de transporte",
     
     "Moradia": "aluguel, imobiliária, condomínio, IPTU, manutenção da casa, reforma, material de construção, encanador, eletricista, pintor, móveis, chaveiro, conserto, faxina, diarista",
     
@@ -40,13 +40,11 @@ dados_semente = {
     
     "Presentes e Doações": "presentes, presente de aniversário, caridade, doação, contribuições, vaquinha, dízimo, oferta, flores, bombom de presente",
     
-    "Viagens": "hotel, airbnb, hospedagem, passagens aéreas, decolar, passeios na viagem, aluguel de carro, mala de viagem, seguro viagem, viagem de férias, viajar",
+    "Viagens": "hotel, airbnb, hospedagem, passagens aéreas, decolar, passeios na viagem, aluguel de carro, mala de viagem, seguro viagem, viagem de férias",
     
     "Assinaturas": "netflix, spotify, ChatGPT, chatgpt plus, amazon prime, icloud, google one, disney plus, hbo max, youtube premium, crunchyroll",
     
     "Cuidados Pessoais": "barbeiro, barbearia, corte de cabelo, salão de beleza, cosméticos, maquiagem, perfume, desodorante, sabonete, shampoo, higiene pessoal, depilação",
-
-    "Receitas": "salário, pagamento recebido, pix recebido, rendimento, mesada, comissão, freelance, restituição, dividendos, dinheiro entrando, recebimento, depósito na conta",
     
     "Outros": "diversos, outros gastos, despesas gerais, tarifa desconhecida, pix enviado sem identificação"
 }

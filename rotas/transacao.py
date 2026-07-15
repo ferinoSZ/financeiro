@@ -8,14 +8,29 @@ def registrar():
     data = request.get_json()
     resultado = gastos_servicos.registrar_gasto(data)
     return jsonify(resultado), 201
-
-
+        
 @transacao_bp.route("/historico", methods=["GET"])
 def historico():
-    filtros = request.args.to_dict()
+    resultado = gastos_servicos.listar_gastos()
+    return jsonify(resultado), 200
 
-    resultado = gastos_servicos.buscar_gastos(filtros)
-       
+@transacao_bp.route("/filtro_mensal", methods=["GET"])
+def historico_mensal():
+    # Usando .args.to_dict() para capturar os filtros da URL
+    data = request.args.to_dict()
+    resultado = gastos_servicos.filtro_por_data(data)
+    return jsonify(resultado), 200
+
+@transacao_bp.route("/filtro_data", methods=["GET"])
+def filtro_data():
+    data = request.args.to_dict()
+    resultado = gastos_servicos.filtro_por_data(data)
+    return jsonify(resultado), 200
+
+@transacao_bp.route("/filtro_categoria", methods=["GET"])
+def historico_categoria():
+    data = request.args.to_dict()
+    resultado = gastos_servicos.filtro_por_categoria(data)
     return jsonify(resultado), 200
 
 @transacao_bp.route("/resumo_mensal", methods=["GET"])
