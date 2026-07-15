@@ -16,7 +16,6 @@ def historico():
 
 @transacao_bp.route("/filtro_mensal", methods=["GET"])
 def historico_mensal():
-    # Usando .args.to_dict() para capturar os filtros da URL
     data = request.args.to_dict()
     resultado = gastos_servicos.filtro_por_data(data)
     return jsonify(resultado), 200
@@ -47,7 +46,6 @@ def resumo_categoria():
 
 @transacao_bp.route("/editar_gasto/<int:id>", methods=["PUT"])
 def editar(id):
-    # PUT modifica dados, então mantém o get_json()
     data = request.get_json()
     resultado = gastos_servicos.editar_gasto(id, data)
     return jsonify(resultado), 200
