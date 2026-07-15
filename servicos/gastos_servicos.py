@@ -1,4 +1,4 @@
-from financia_db import mysql
+from financia_db import pegar_conexao
 from servicos.categorizador import categorizar
 from datetime import datetime
 
@@ -10,51 +10,98 @@ def registrar_gasto(data):
         return {"error": "Descrição e valor são obrigatórios."}, 400
 
     categoria = data.get('categoria') or categorizar(descricao)
+
+    tipo = "ENTRADA" if categoria == "Receitas" else "SAIDA"
     
     dia = data.get('dia')
     if not dia:
         dia = datetime.now().strftime('%Y-%m-%d')
 
+    conexao = None
+    cursor = None
     try:
-        cursor = mysql.connection.cursor()
-        cursor.execute("INSERT INTO financeiro.gastos (descricao, categoria, valor, dia) VALUES (%s, %s, %s, %s)", (descricao, categoria, valor, dia))
-        mysql.connection.commit()
+        conexao = pegar_conexao()
+        cursor = conexao.cursor()
+        cursor.execute("INSERT INTO financeiro.gastos (descricao, categoria, valor, dia, tipo) VALUES (%s, %s, %s, %s, %s)", (descricao, categoria, valor, dia, tipo))
+        conexao.commit()
+
     except Exception as erro:
-        print(f"Erro no bando de dados: {str(erro)}"), 500
+        return({"error": f"Erro no bando de dados: {str(erro)}"}, 500)
     finally:
-        cursor.close()
+        if cursor is not None:
+            cursor.close()
+        if conexao is not None:
+            conexao.close()
 
     return {"message": "Gasto registrado com sucesso!"}
 
-def listar_gastos():
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM gastos")
-    transacao = cursor.fetchall()
-    cursor.close()
+def obter_historico(categoria=None):
+    query = """
+        SELECT descricao, valor, categoria, tipo, dia 
+        FROM financeiro.gastos
+    """
+    valores_query = []
 
-    return transacao
+    if categoria:
+        query += " WHERE categoria = %s"
+        valores_query.append(categoria)
 
-def filtro_por_data(data):
-    day = data.get('dia')
-    mes = data.get('mes')
-    ano = data.get('ano')
+    else:
+        query += " ORDER BY id DESC LIMIT 10"
+    try:
+        conexao = pegar_conexao()
+        cursor = conexao.cursor()
+        if valores_query:
+            cursor.execute(query, valores_query)
+        else:
+            cursor.execute(query)
+        resultados = cursor.fetchall()
 
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM gastos WHERE (%s IS NULL OR YEAR(dia) = %s) AND (%s IS NULL OR MONTH(dia) = %s) AND (%s IS NULL OR DAY(dia) = %s)", (ano, ano, mes, mes, day, day))
-    historico = cursor.fetchall()
-    cursor.close()
+        return resultados
+    except Exception as erro:
+        print(f"Erro ao buscar histórico: {erro}")
+        return[]
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conexao is not None:
+            conexao.close()
 
-    return historico
+def buscar_gastos(filtros):
+    query = "SELECT * FROM financeiro.gastos WHERE 1=1"
+    valores = []
 
-def filtro_por_categoria(data):
-    categoria = data.get('categoria')
+    if 'categoria' in filtros:
+        query += " AND categoria = %s"
+        valores.append(filtros['categoria'])
 
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM gastos WHERE categoria = %s", (categoria))
-    historico = cursor.fetchall()
-    cursor.close()
+    if 'data' in filtros:
+        query += " AND dia = %s"
+        valores.append(filtros['data'])
 
-    return historico
+    if 'mes' in filtros:
+        query += " AND MONTH(dia) = %s"
+        valores.append(filtros['mes'])
+        
+    if 'tipo' in filtros:
+        query += " AND tipo = %s"
+        valores.append(filtros['tipo'])
+
+    query += " ORDER BY dia DESC"
+
+    try:
+        cursor = mysql.connection.cursor()
+        # Transformamos a nossa lista de valores em uma tupla para o MySQL
+        cursor.execute(query, tuple(valores))
+        
+        colunas = [col[0] for col in cursor.description]
+        resultados = [dict(zip(colunas, linha)) for linha in cursor.fetchall()]
+        
+        return resultados
+    except Exception as e:
+        return {"error": f"Erro na busca dinâmica: {str(e)}"}, 500
+    finally:
+        cursor.close()
 
 def gerar_resumo_mensal(data):
     mes = data.get('mes')
